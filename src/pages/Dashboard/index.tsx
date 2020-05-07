@@ -1,4 +1,7 @@
+/* eslint-disable import/no-duplicates */
 import React, { useState, useEffect } from 'react';
+import { format, parseISO } from 'date-fns';
+import pt from 'date-fns/locale/pt-BR';
 
 import incomeImg from '../../assets/income.svg';
 import outcomeImg from '../../assets/outcome.svg';
@@ -37,9 +40,15 @@ const Dashboard: React.FC = () => {
     async function loadTransactions(): Promise<void> {
       const response = await api.get(`transactions`);
 
-      response.data.transactions.forEach((transaction: any, index: any) => {
+      response.data.transactions.forEach((_: any, index: number) => {
         response.data.transactions[index].value = formatValue(
           response.data.transactions[index].value,
+        );
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        response.data.transactions[index].created_at = format(
+          parseISO(response.data.transactions[index].created_at),
+          "dd'/'MM'/'yyyy",
+          { locale: pt },
         );
       });
 
